@@ -33,9 +33,7 @@ import com.woowacourse.ternoko.core.dto.request.FormItemRequest;
 import com.woowacourse.ternoko.core.dto.request.InterviewRequest;
 import com.woowacourse.ternoko.core.dto.response.InterviewResponse;
 import com.woowacourse.ternoko.core.dto.response.ScheduleResponse;
-import com.woowacourse.ternoko.support.alarm.AlarmResponse;
-import com.woowacourse.ternoko.support.alarm.AlarmResponseCache;
-import com.woowacourse.ternoko.support.alarm.SlackMessageType;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Comparator;
@@ -60,7 +58,6 @@ public class InterviewService {
     private final CrewRepository crewRepository;
     private final InterviewRepository interviewRepository;
     private final AvailableDateTimeRepository availableDateTimeRepository;
-    private final AlarmResponseCache cache;
 
     @Transactional(isolation = SERIALIZABLE)
     public Long create(final Long crewId, final InterviewRequest interviewRequest) {
@@ -68,7 +65,7 @@ public class InterviewService {
         validateDuplicateStartTimeByCrew(interviewRequest.getInterviewDatetime(), crewId);
         validateUsedTime(interview);
         interview.changeAvailableTimeStatus(USED);
-        setCreateMessage(interview);
+//        setCreateMessage(interview);
         return interviewRepository.save(interview).getId();
     }
 
@@ -176,7 +173,7 @@ public class InterviewService {
 
         updateInterview.changeAvailableTimeStatus(USED);
         interview.update(updateInterview);
-        setUpdateMessage(interview, origin);
+//        setUpdateMessage(interview, origin);
     }
 
     private void validateDuplicate(final Long interviewId,
@@ -206,12 +203,12 @@ public class InterviewService {
         if (onlyInterview) {
             saveDuplicatedAvailableDateTimeOfInterview(interview);
             interview.cancel();
-            setCancelMessage(interview);
+//            setCancelMessage(interview);
             return;
         }
 
         interview.cancel();
-        setCancelMessage(interview);
+//        setCancelMessage(interview);
     }
 
     private void saveDuplicatedAvailableDateTimeOfInterview(final Interview interview) {
@@ -226,7 +223,7 @@ public class InterviewService {
         final Interview interview = getInterviewById(interviewId);
         openAvailableDateTimeIfNotCanceled(interview);
         deleteInterview(crewId, interview);
-        setDeleteMessage(interview);
+//        setDeleteMessage(interview);
     }
 
     private void openAvailableDateTimeIfNotCanceled(final Interview interview) {
@@ -266,23 +263,24 @@ public class InterviewService {
                 .collect(Collectors.toList());
     }
 
-    private void setCreateMessage(final Interview interview) {
-        cache.setOrigin(AlarmResponse.from(interview));
-        cache.setMessageType(SlackMessageType.CREW_CREATE);
-    }
+//    private void setCreateMessage(final Interview interview) {
+//        cache.setOrigin(AlarmResponse.from(interview));
+//        cache.setMessageType(SlackMessageType.CREW_CREATE);
+//    }
 
-    private void setUpdateMessage(final Interview interview, final Interview origin) {
-        cache.setOrigin(AlarmResponse.from(origin));
-        cache.setUpdate(AlarmResponse.from(interview));
-        cache.setMessageType(SlackMessageType.CREW_UPDATE);
-    }
+//    private void setUpdateMessage(final Interview interview, final Interview origin) {
+//        cache.setOrigin(AlarmResponse.from(origin));
+//        cache.setUpdate(AlarmResponse.from(interview));
+//        cache.setMessageType(SlackMessageType.CREW_UPDATE);
+//        cache.setMessageType(SlackMessageType.CREW_UPDATE);
+//    }
+//
+//    private void setCancelMessage(final Interview interview) {
+//        cache.setOrigin(AlarmResponse.from(interview));
+//        cache.setMessageType(SlackMessageType.COACH_CANCEL);
+//    }
 
-    private void setCancelMessage(final Interview interview) {
-        cache.setOrigin(AlarmResponse.from(interview));
-        cache.setMessageType(SlackMessageType.COACH_CANCEL);
-    }
-
-    private void setDeleteMessage(final Interview interview) {
-        cache.setOrigin(AlarmResponse.from(interview));
-    }
+//    private void setDeleteMessage(final Interview interview) {
+//        cache.setOrigin(AlarmResponse.from(interview));
+//    }
 }
