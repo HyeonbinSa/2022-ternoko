@@ -8,4 +8,3 @@ public class CoachInvalidException extends CommonException {
         super(exceptionType.getHttpStatus(), exceptionType.getStatusCode(), coachId + exceptionType.getMessage());
     }
 }
-
