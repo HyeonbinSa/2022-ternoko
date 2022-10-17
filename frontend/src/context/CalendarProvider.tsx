@@ -1,6 +1,6 @@
 import { createContext, useContext, useState } from 'react';
 
-import { DateType, SelectMode } from '@/types/domain';
+import { SelectMode } from '@/types/domain';
 
 import { convertMonthIndexToMonth, convertMonthToMonthIndex } from '@/utils';
 
@@ -9,10 +9,16 @@ type CalendarProviderProps = {
   children: React.ReactNode;
 };
 
+type Date = {
+  year: number;
+  month: number;
+  day: number;
+};
+
 type CalendarStateType = {
   year: number;
   month: number;
-  selectedDates: DateType[];
+  selectedDates: Date[];
   showMonthPicker: boolean;
 };
 
@@ -26,8 +32,8 @@ type CalendarActionsType = {
   addOrSetDateBySelectMode: (day: number) => void;
   getHandleClickMonth: (monthIndex: number) => () => void;
   resetSelectedDates: () => void;
-  addSelectedDates: (dates: DateType[]) => void;
-  removeSelectedDates: (dates: DateType[]) => void;
+  addSelectedDates: (dates: Date[]) => void;
+  removeSelectedDates: (dates: Date[]) => void;
   initializeYearMonth: (year: number, month: number) => void;
 };
 
@@ -37,7 +43,7 @@ type CalendarUtilsType = {
   isBelowToday: (day: number) => boolean;
   isSelectedDate: (day: number) => boolean;
   isOverFirstDay: (index: number) => boolean;
-  isSameDate: (date: DateType, day: number) => boolean;
+  isSameDate: (date: Date, day: number) => boolean;
   getDay: (index: number) => number;
   getDateStrings: () => string[];
 };
@@ -75,7 +81,7 @@ const CalendarProvider = ({ selectMode, children }: CalendarProviderProps) => {
   const [year, setYear] = useState(date.getFullYear());
   const [month, setMonth] = useState(date.getMonth() + 1);
 
-  const [selectedDates, setSelectedDates] = useState<DateType[]>([]);
+  const [selectedDates, setSelectedDates] = useState<Date[]>([]);
 
   const [showMonthPicker, setShowMonthPicker] = useState(false);
 
@@ -83,7 +89,7 @@ const CalendarProvider = ({ selectMode, children }: CalendarProviderProps) => {
   const daysOfMonth = [31, getFebruaryDays(year), 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
   const daysLength = daysOfMonth[convertMonthToMonthIndex(month)] + firstDay;
 
-  const isSameDate = (date: DateType, day: number) =>
+  const isSameDate = (date: Date, day: number) =>
     date.year === year && date.month === month && date.day === day;
 
   const isToday = (day: number) => {
@@ -165,10 +171,10 @@ const CalendarProvider = ({ selectMode, children }: CalendarProviderProps) => {
     resetSelectedDates() {
       setSelectedDates([]);
     },
-    addSelectedDates(dates: DateType[]) {
+    addSelectedDates(dates: Date[]) {
       setSelectedDates((prev) => [...prev, ...dates]);
     },
-    removeSelectedDates(dates: DateType[]) {
+    removeSelectedDates(dates: Date[]) {
       setSelectedDates((prev) =>
         prev.filter((selectedDate) =>
           dates.every(
