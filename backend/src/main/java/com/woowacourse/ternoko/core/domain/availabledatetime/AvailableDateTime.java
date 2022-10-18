@@ -26,7 +26,7 @@ import lombok.NoArgsConstructor;
 public class AvailableDateTime {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @Column(name = "coach_id", nullable = false)
